@@ -4,7 +4,7 @@
 // ================================================================
 
 const countriesUnorderedList = document.getElementById('countries');
-console.log(countriesUnorderedList)
+
 const sortByPopulationButton = document.getElementById('sortByPopulation');
 const sortByNameButton = document.getElementById('sortByName');
 
@@ -39,20 +39,28 @@ function parseCountries() {
     var code = items[i].getAttribute('class')
     var datos = items[i].children
     var name = datos[0].innerHTML
-    console.log(name)
-    var population = Number.parseInt(datos[1].innerHTML)
-    // population = multiplicarPorMil(population)
-    console.log(datos[1].innerHTML)
-    console.log(population)
+
+    var populationString = datos[1].innerHTML
+    var populationArray = populationString.split(".")
+    var populationFiltered = ''
+    populationArray.forEach(element => {
+      populationFiltered += element
+    });
+    var population = parseInt(populationFiltered)
+    
+    var unPais = {
+      name: name,
+      population: population,
+      code: code
+    }
+    
+    countries.push(unPais)
   }
 
   return countries;
 }
-parseCountries()
 
-function multiplicarPorMil(pob){
-  return 1000 * pob
-}
+
 // ================================================================
 // ====      TODO: Completar la función displayCountries       ====
 // ====                                                        ====
@@ -62,13 +70,64 @@ function multiplicarPorMil(pob){
 // ====                                                        ====
 // ====        Presta principal atención a que el valor        ====
 // ====       de la poblacion se muestre tal como estaba       ====
-// ====  al comienzo de la ejecusión (con separador de miles)  ====
+// ====  al comienzo de la ejecución (con separador de miles)  ====
 // ================================================================
 
 function displayCountries(countries) {
   
   // Completa aquí la lógica de la función...
+  
+  var posicionDeLista = 0
+  
+  countries.forEach(unPais => {
+    countriesUnorderedList.removeChild(countriesUnorderedList.childNodes[posicionDeLista])
+    var unItem = document.createElement('li')
+    unItem.setAttribute('class', unPais.code)
+   
+    var suNombre = document.createElement('span')
+    suNombre.innerHTML = unPais.name
+    
+    var suPoblacion = document.createElement('strong')
+    suPoblacion.innerHTML = convertirAString(unPais.population)
 
+    posicionDeLista++
+  });
+}
+
+function convertirAString(pob){
+  var pobArray = pob.toString().split('')
+  var pobAlReves = pobArray.reverse()
+  
+  var pobConPuntosAlReves = insertarPuntos(pobAlReves)
+  var poblacion = pobConPuntosAlReves.reverse().toString()
+  console.log(poblacion)
+}
+
+function insertarPuntos(pobAlReves){
+  // var pobConPuntos = []
+  var recorrer = 0
+
+  for(let pos = 0; pos < pobAlReves.length;){
+    while(recorrer != 3){
+      recorrer++
+    }
+  
+    var posAInsertar = recorrer + 1
+    pobAlReves.splice(posAInsertar, 0, '.')
+    pos = posAInsertar + 1
+    recorrer = 0;
+  }
+ 
+  // for(let pos = 0; pos < pobAlReves.length; pos++){
+  //   contador++
+  //   if(contador == 3){
+  //     pobConPuntos.push('.')
+  //     contador = 0
+  //   }  
+  //   pobConPuntos.push(pobAlReves[pos])
+  // }
+
+  return pobAlReves
 }
 
 // ================================================================
