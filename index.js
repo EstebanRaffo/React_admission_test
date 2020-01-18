@@ -40,13 +40,13 @@ function parseCountries() {
     var datos = items[i].children
     var name = datos[0].innerHTML
 
-    var populationString = datos[1].innerHTML
-    var populationArray = populationString.split(".")
-    var populationFiltered = ''
+    var populationData = datos[1].innerHTML
+    var populationArray = populationData.split(".")
+    var populationString = ''
     populationArray.forEach(element => {
-      populationFiltered += element
+      populationString += element
     });
-    var population = parseInt(populationFiltered)
+    var population = parseInt(populationString)
     
     var unPais = {
       name: name,
@@ -77,58 +77,26 @@ function displayCountries(countries) {
   
   // Completa aquí la lógica de la función...
   
-  var posicionDeLista = 0
+  countriesUnorderedList.innerHTML = ''
   
   countries.forEach(unPais => {
-    countriesUnorderedList.removeChild(countriesUnorderedList.childNodes[posicionDeLista])
+    
     var unItem = document.createElement('li')
     unItem.setAttribute('class', unPais.code)
    
     var suNombre = document.createElement('span')
     suNombre.innerHTML = unPais.name
-    
-    var suPoblacion = document.createElement('strong')
-    suPoblacion.innerHTML = convertirAString(unPais.population)
+    unItem.appendChild(suNombre)
 
-    posicionDeLista++
+    var suPoblacion = document.createElement('strong')
+    suPoblacion.innerHTML = (unPais.population).toLocaleString()
+    unItem.appendChild(suPoblacion)
+
+    countriesUnorderedList.appendChild(unItem)
+
   });
 }
 
-function convertirAString(pob){
-  var pobArray = pob.toString().split('')
-  var pobAlReves = pobArray.reverse()
-  
-  var pobConPuntosAlReves = insertarPuntos(pobAlReves)
-  var poblacion = pobConPuntosAlReves.reverse().toString()
-  console.log(poblacion)
-}
-
-function insertarPuntos(pobAlReves){
-  // var pobConPuntos = []
-  var recorrer = 0
-
-  for(let pos = 0; pos < pobAlReves.length;){
-    while(recorrer != 3){
-      recorrer++
-    }
-  
-    var posAInsertar = recorrer + 1
-    pobAlReves.splice(posAInsertar, 0, '.')
-    pos = posAInsertar + 1
-    recorrer = 0;
-  }
- 
-  // for(let pos = 0; pos < pobAlReves.length; pos++){
-  //   contador++
-  //   if(contador == 3){
-  //     pobConPuntos.push('.')
-  //     contador = 0
-  //   }  
-  //   pobConPuntos.push(pobAlReves[pos])
-  // }
-
-  return pobAlReves
-}
 
 // ================================================================
 // ====    TODO: Completar el funcionamiento de los botones    ====
@@ -143,17 +111,34 @@ sortByPopulationButton.addEventListener('click', function () {
 
   // Completa aquí la lógica para ordenar por población (de mayor a menor) del arreglo countries
 
+  function comparar(unPais, otroPais){
+    return otroPais.population - unPais.population
+  }
+  countries.sort(comparar)
+  
   displayCountries(countries);
 
   sortByNameButton.className = '';
   sortByPopulationButton.className = 'active';
 });
 
+
 sortByNameButton.addEventListener('click', function () {
   let countries = parseCountries();
 
   // Completa aquí la lógica para ordenar por nombre (alfabéticamente) del arreglo countries
-
+  
+  function comparar(unPais, otroPais){
+    if (unPais.name > otroPais.name) {
+      return 1;
+    }
+    if (unPais.name < otroPais.name) {
+      return -1;
+    }
+    return 0;
+  }
+  countries.sort(comparar)
+  
   displayCountries(countries);
 
   sortByPopulationButton.className = '';
